@@ -20,7 +20,7 @@ export default function LandingPage() {
       </AnimatePresence>
 
       {/* Navigation */}
-      <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl mt-4 rounded-xl border border-zinc-800/30 bg-zinc-950/60 backdrop-blur-xl shadow-2xl shadow-black/40 flex justify-between items-center px-8 py-3 z-50">
+      <nav className="fixed top-0 w-full border-b border-zinc-800/30 bg-zinc-950/60 backdrop-blur-xl shadow-2xl shadow-black/40 flex justify-between items-center px-8 sm:px-12 py-3 z-50">
         <div className="text-2xl font-bold text-zinc-100 tracking-tight flex items-center">
           Industudent<span className="text-violet-500">.</span>
         </div>

@@ -1,0 +1,274 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  STUDENT
+  COMPANY
+  REVIEWER
+  ADMIN
+}
+
+enum Domain {
+  DATA
+  DESIGN
+  MARKETING
+  FINANCE
+  BACKEND
+  PRODUCT
+  SUPPLY_CHAIN
+}
+
+enum Difficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum ProjectStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum AttemptStatus {
+  PAID
+  SUBMITTED
+  UNDER_REVIEW
+  REVIEWED
+  FLAGGED
+}
+
+enum PaymentType {
+  ATTEMPT_FEE
+  PROJECT_POSTING
+  PLACEMENT_FEE
+  CERTIFICATION
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  avatar    String?
+  role      Role
+  createdAt DateTime @default(now())
+
+  studentProfile  StudentProfile?
+  companyProfile  CompanyProfile?
+  reviewerProfile ReviewerProfile?
+  attempts        Attempt[]
+  payments        Payment[]
+
+  @@map("users")
+}
+
+model StudentProfile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  college        String?
+  graduationYear Int?
+  domains        String[]
+  totalScore     Float    @default(0)
+  badgeCount     Int      @default(0)
+  resumeUrl      String?
+  bio            String?
+  linkedinUrl    String?
+  user           User     @relation(fields: [userId], references: [id])
+  badges         Badge[]
+
+  @@map("student_profiles")
+}
+
+model CompanyProfile {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  companyName String
+  industry    String
+  size        String
+  website     String?
+  logoUrl     String?
+  verified    Boolean   @default(false)
+  user        User      @relation(fields: [userId], references: [id])
+  projects    Project[]
+
+  @@map("company_profiles")
+}
+
+model ReviewerProfile {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  domains      String[]
+  yearsExp     Int
+  currentRole  String
+  rating       Float    @default(5.0)
+  totalReviews Int      @default(0)
+  ratePerReview Int
+  user         User     @relation(fields: [userId], references: [id])
+  reviews      Review[]
+
+  @@map("reviewer_profiles")
+}
+
+model Project {
+  id             String        @id @default(cuid())
+  companyId      String
+  title          String
+  domain         Domain
+  difficulty     Difficulty
+  description    String        @db.Text
+  briefUrl       String
+  datasetUrl     String?
+  estimatedHours Int
+  deadline       DateTime
+  maxAttempts    Int           @default(100)
+  attemptFee     Int
+  status         ProjectStatus
+  rubric         Json
+  tags           String[]
+  createdAt      DateTime      @default(now())
+
+  company  CompanyProfile @relation(fields: [companyId], references: [id])
+  attempts Attempt[]
+  reviews  Review[]
+
+  @@map("projects")
+}
+
+model Attempt {
+  id             String        @id @default(cuid())
+  projectId      String
+  userId         String
+  status         AttemptStatus
+  submissionUrl  String?
+  submissionNote String?       @db.Text
+  processJournal String?       @db.Text
+  wipScreenshots String[]
+  timeBreakdown  Json?
+  toolsUsed      String[]
+  aiDeclaration  String?
+  autoScore      Float?
+  autoFeedback   Json?
+  finalScore     Float?
+  submittedAt    DateTime?
+  paidAt         DateTime      @default(now())
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  project         Project        @relation(fields: [projectId], references: [id])
+  user            User           @relation(fields: [userId], references: [id])
+  review          Review?
+  payment         Payment?
+  integrityCheck  IntegrityCheck?
+  interview       VerificationInterview?
+
+  @@map("attempts")
+}
+
+model Review {
+  id               String   @id @default(cuid())
+  attemptId        String   @unique
+  reviewerId       String
+  projectId        String
+  scores           Json
+  overallScore     Float
+  writtenFeedback  String   @db.Text
+  videoFeedbackUrl String?
+  strengthPoints   String[]
+  improvPoints     String[]
+  hireRecommend    Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  attempt  Attempt         @relation(fields: [attemptId], references: [id])
+  reviewer ReviewerProfile @relation(fields: [reviewerId], references: [id])
+  project  Project         @relation(fields: [projectId], references: [id])
+
+  @@map("reviews")
+}
+
+model Badge {
+  id        String         @id @default(cuid())
+  studentId String
+  domain    Domain
+  level     String
+  earnedAt  DateTime       @default(now())
+  student   StudentProfile @relation(fields: [studentId], references: [id])
+
+  @@map("badges")
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  userId            String
+  attemptId         String?       @unique
+  amount            Int
+  type              PaymentType
+  razorpayOrderId   String
+  razorpayPaymentId String?
+  status            PaymentStatus
+  createdAt         DateTime      @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  attempt Attempt? @relation(fields: [attemptId], references: [id])
+
+  @@map("payments")
+}
+
+model IntegrityCheck {
+  id                String   @id @default(cuid())
+  attemptId         String   @unique
+  flagged           Boolean  @default(false)
+  riskLevel         String
+  analysisResults   Json?
+  overallRiskScore  Float?
+  dimensionScores   Json?
+  specificFlags     String[]
+  greenSignals      String[]
+  recommendation    String?
+  cohortSimilarity  Float?
+  processEvidence   Json?
+  aiDeclaration     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  attempt           Attempt  @relation(fields: [attemptId], references: [id])
+
+  @@map("integrity_checks")
+}
+
+model VerificationInterview {
+  id                 String    @id @default(cuid())
+  attemptId          String    @unique
+  triggeredBy        String    @default("SYSTEM")
+  status             String    @default("PENDING")
+  generatedQuestions Json      @default("[]")
+  studentResponses   Json      @default("[]")
+  videoUrl           String?
+  interviewScore     Float?
+  analysisResults    Json?
+  outcome            String?
+  scheduledDeadline  DateTime
+  startedAt          DateTime?
+  completedAt        DateTime?
+  interviewNotes     String?   @db.Text
+  estimatedDuration  Int?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  attempt            Attempt   @relation(fields: [attemptId], references: [id])
+
+  @@map("verification_interviews")
+}

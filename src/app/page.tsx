@@ -1,250 +1,284 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import type { ProjectCardProps } from "@/components/ProjectCard";
-import { ProjectCard } from "@/components/ProjectCard";
-import { DomainTile } from "@/components/DomainTile";
-import { TrustBadgeRow } from "@/components/TrustBadgeRow";
-import { HowItWorksTabs } from "@/components/HowItWorksTabs";
-import type { Domain, Difficulty } from "@/types";
+import { motion, AnimatePresence } from "framer-motion";
+import { AuthModal } from "@/components/AuthModal";
 
-const featuredProjects: ProjectCardProps[] = [
-  {
-    id: "brief-1",
-    title: "SaaS onboarding audit for early-stage product teams",
-    company: "NovaScale",
-    domain: "PRODUCT" as Domain,
-    difficulty: "INTERMEDIATE" as Difficulty,
-    description:
-      "Improve conversion, reduce churn, and design a product-led growth roadmap for a B2B onboarding flow.",
-    estimatedHours: 12,
-    attemptFee: 29900,
-    spotsTaken: 67,
-    maxAttempts: 100,
-    tags: ["product", "growth", "ux"],
-    deadline: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "brief-2",
-    title: "Market segmentation model for a grocery delivery brand",
-    company: "FreshLoop",
-    domain: "DATA" as Domain,
-    difficulty: "BEGINNER" as Difficulty,
-    description:
-      "Use user and order metrics to identify churn drivers, retention cohorts, and business-friendly recommendations.",
-    estimatedHours: 10,
-    attemptFee: 29900,
-    spotsTaken: 38,
-    maxAttempts: 100,
-    tags: ["data", "analytics", "retention"],
-    deadline: new Date(Date.now() + 12 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-  {
-    id: "brief-3",
-    title: "Design a landing page for a fintech savings app",
-    company: "Vaultly",
-    domain: "DESIGN" as Domain,
-    difficulty: "BEGINNER" as Difficulty,
-    description:
-      "Create a high-converting hero, dashboard mockup, and mobility-first microcopy for first-time savers.",
-    estimatedHours: 8,
-    attemptFee: 29900,
-    spotsTaken: 54,
-    maxAttempts: 100,
-    tags: ["design", "ux", "fintech"],
-    deadline: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000).toISOString(),
-  },
-];
+export default function LandingPage() {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const words = "Your work speaks. Your resume doesn't have to.".split(" ");
 
-const domainGrid = [
-  { domain: "DATA" as Domain, activeProjects: 28, avgScore: 82 },
-  { domain: "DESIGN" as Domain, activeProjects: 22, avgScore: 86 },
-  { domain: "MARKETING" as Domain, activeProjects: 18, avgScore: 79 },
-  { domain: "BACKEND" as Domain, activeProjects: 14, avgScore: 81 },
-  { domain: "PRODUCT" as Domain, activeProjects: 16, avgScore: 84 },
-  { domain: "FINANCE" as Domain, activeProjects: 10, avgScore: 77 },
-  { domain: "SUPPLY_CHAIN" as Domain, activeProjects: 8, avgScore: 73 },
-];
-
-const stats = [
-  { label: "₹4.2Cr saved by companies", value: "4.2Cr" },
-  { label: "12,000+ projects attempted", value: "12,000+" },
-  { label: "340 direct hires", value: "340" },
-];
-
-const testimonials = [
-  {
-    role: "Student",
-    quote:
-      "ProofWork helped me build a resume-ready project and get feedback from industry experts before I graduated.",
-    author: "Priya, UX design intern",
-  },
-  {
-    role: "Company",
-    quote:
-      "We found pre-screened candidates and got useful solutions from a real marketplace format.",
-    author: "Rahul, Talent lead",
-  },
-  {
-    role: "Reviewer",
-    quote:
-      "The rubric-driven reviews are efficient and the pay structure is transparent.",
-    author: "Anika, Product reviewer",
-  },
-];
-
-export default function HomePage() {
   return (
-    <main className="relative isolate min-h-screen overflow-hidden bg-slate-950 text-slate-100">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_top,_rgba(108,71,255,0.24),_transparent_45%)] blur-3xl" />
-      <div className="mx-auto flex max-w-7xl flex-col gap-20 px-6 py-12 sm:px-8 lg:px-10">
-        <section className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
-          <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full bg-violet-500/10 px-4 py-2 text-sm font-semibold text-violet-200">
-              <span className="h-2 w-2 rounded-full bg-violet-400" />
-              Student projects, verified feedback, hiring-ready work.
-            </div>
-            <div className="max-w-xl space-y-6">
-              <h1 className="text-5xl font-semibold tracking-tight text-white sm:text-6xl">
-                Your work speaks. Your resume doesn&apos;t have to.
-              </h1>
-              <p className="text-xl leading-8 text-slate-300">
-                Attempt real projects from real companies. Get expert feedback. Get hired — before you even graduate.
-              </p>
-            </div>
-            <div className="flex flex-col gap-4 sm:flex-row">
-              <Link href="/projects" className="inline-flex items-center justify-center rounded-full bg-violet-500 px-6 py-3 text-sm font-semibold text-white transition hover:bg-violet-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/40">
-                Browse Projects →
-              </Link>
-              <Link href="/auth/login" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-300/30">
-                Post a Project
-              </Link>
-            </div>
-            <TrustBadgeRow />
-          </div>
+    <div className="dark min-h-screen bg-[#0e0e0f] text-white selection:bg-violet-500/30 selection:text-violet-300 font-sans">
 
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="relative isolate overflow-hidden rounded-[32px] border border-white/10 bg-slate-900/90 p-8 shadow-[0_50px_120px_rgba(15,23,42,0.5)]"
+      {/* Auth Modal */}
+      <AnimatePresence>
+        {isAuthModalOpen && (
+          <AuthModal onClose={() => setIsAuthModalOpen(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* Navigation */}
+      <nav className="fixed top-0 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-7xl mt-4 rounded-xl border border-zinc-800/30 bg-zinc-950/60 backdrop-blur-xl shadow-2xl shadow-black/40 flex justify-between items-center px-8 py-3 z-50">
+        <div className="text-2xl font-bold text-zinc-100 tracking-tight flex items-center">
+          Industudent<span className="text-violet-500">.</span>
+        </div>
+
+        <div className="hidden md:flex items-center gap-8">
+          <Link href="#domains" className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm">Domains</Link>
+          <Link href="#stats" className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm">Stats</Link>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsAuthModalOpen(true)}
+            className="text-zinc-400 hover:text-zinc-100 transition-colors text-sm font-medium"
           >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(99,102,241,0.16),_transparent_35%)]" />
-            <div className="relative space-y-6">
-              <div className="space-y-3">
-                <p className="text-sm uppercase tracking-[0.32em] text-violet-300">Sample project brief</p>
-                <h2 className="text-2xl font-semibold text-white">E-commerce conversion growth challenge</h2>
-              </div>
-              <div className="rounded-3xl border border-white/10 bg-slate-950/90 p-6">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <span className="rounded-2xl bg-violet-500/10 px-3 py-1 text-sm font-medium text-violet-200">Data</span>
-                  <span className="rounded-2xl bg-white/5 px-3 py-1 text-sm text-slate-300">₹299</span>
-                </div>
-                <p className="text-sm leading-6 text-slate-300">
-                  Analyze live user funnels, identify friction points in checkout, and recommend three product experiments to lift purchase rate.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3 text-xs uppercase tracking-[0.3em] text-slate-500">
-                  <span>Delivery report</span>
-                  <span>Auto feedback</span>
-                  <span>Verified badge</span>
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-3xl bg-white/5 p-4 text-sm text-slate-300">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Deadline</p>
-                  <p className="mt-2 text-lg font-semibold text-white">8 days left</p>
-                </div>
-                <div className="rounded-3xl bg-white/5 p-4 text-sm text-slate-300">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Score estimate</p>
-                  <p className="mt-2 text-lg font-semibold text-white">83 / 100</p>
-                </div>
-              </div>
-            </div>
+            Log In
+          </button>
+          <Link
+            href="/auth/company-login"
+            className="bg-gradient-to-br from-[#8a4cfc] to-[#bd9dff] px-5 py-2 rounded-lg text-black text-sm font-bold hover:scale-105 active:scale-95 transition-transform"
+          >
+            Partner with Us
+          </Link>
+        </div>
+      </nav>
+
+      <main>
+        {/* ─── Hero ─── */}
+        <section className="min-h-screen flex flex-col items-center justify-center text-center px-6 relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(circle_at_50%_0%,_rgba(138,76,252,0.22),_transparent_55%)] blur-3xl" />
+
+          {/* Headline */}
+          <h1 className="relative z-10 text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight max-w-5xl leading-[1.05] text-zinc-100 mb-8">
+            {words.map((word, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + i * 0.09, duration: 0.5 }}
+                className={`inline-block mr-[0.25em] ${
+                  ["resume", "doesn't", "have", "to."].includes(word)
+                    ? "text-transparent bg-clip-text bg-gradient-to-r from-[#bd9dff] via-[#a67aff] to-[#c38bf5]"
+                    : ""
+                }`}
+              >
+                {word}
+              </motion.span>
+            ))}
+          </h1>
+
+          {/* Subtext */}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.6 }}
+            className="relative z-10 text-lg md:text-xl text-zinc-400 max-w-xl mx-auto mb-12 font-light leading-relaxed"
+          >
+            Attempt real projects. Get verified feedback. Get hired.
+          </motion.p>
+
+          {/* Single CTA - triggers student login */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.3, duration: 0.5 }}
+            className="relative z-10"
+          >
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="bg-gradient-to-br from-[#8a4cfc] to-[#bd9dff] px-12 py-4 rounded-xl text-black font-bold text-lg shadow-xl shadow-violet-500/20 hover:scale-[1.03] active:scale-[0.98] transition-transform"
+            >
+              Get Started
+            </button>
           </motion.div>
         </section>
 
-        <section className="grid gap-10 lg:grid-cols-[0.9fr_1fr] lg:items-start">
-          <div>
-            <div className="mb-8 space-y-3">
-              <p className="text-sm uppercase tracking-[0.3em] text-violet-300">How it works</p>
-              <h2 className="text-3xl font-semibold text-white">One platform for students, companies, and reviewers.</h2>
-            </div>
-            <HowItWorksTabs />
-          </div>
-
-          <div className="space-y-6 rounded-[32px] border border-white/10 bg-slate-950/80 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.35)]">
-            <div className="space-y-4">
-              <p className="text-sm uppercase tracking-[0.3em] text-violet-300">Featured projects</p>
-              <h3 className="text-2xl font-semibold text-white">Hand-picked briefs from verified partners.</h3>
-            </div>
-            <div className="grid gap-4">
-              {featuredProjects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-          <div className="space-y-6">
-            <p className="text-sm uppercase tracking-[0.3em] text-violet-300">Social proof</p>
-            <h2 className="text-3xl font-semibold text-white">Real outcomes, not just promises.</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
-              {stats.map((item) => (
-                <div key={item.label} className="rounded-3xl bg-slate-900/80 p-6 text-center">
-                  <p className="text-4xl font-semibold text-white">{item.value}</p>
-                  <p className="mt-3 text-sm text-slate-400">{item.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="grid gap-4">
-            {testimonials.map((testimonial) => (
-              <div key={testimonial.author} className="rounded-[28px] border border-white/10 bg-slate-950/80 p-6">
-                <p className="text-sm leading-7 text-slate-300">“{testimonial.quote}”</p>
-                <p className="mt-4 text-sm font-semibold text-white">{testimonial.author}</p>
-                <p className="text-xs uppercase tracking-[0.28em] text-slate-500">{testimonial.role}</p>
-              </div>
+        {/* ─── Key Stats ─── */}
+        <section id="stats" className="max-w-7xl mx-auto px-6 md:px-8 py-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              { value: "₹4.2Cr", label: "Stipends Saved" },
+              { value: "12,000+", label: "Projects Shipped" },
+              { value: "340+", label: "Elite Hires" },
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                className="p-10 rounded-2xl bg-[#131314] border border-zinc-800 flex flex-col items-center justify-center text-center group hover:bg-[#201f21] hover:border-violet-500/30 transition-colors"
+              >
+                <span className="text-5xl md:text-6xl font-extrabold text-zinc-100 mb-2 group-hover:text-violet-400 transition-colors">
+                  {stat.value}
+                </span>
+                <span className="text-sm uppercase tracking-widest text-zinc-500">{stat.label}</span>
+              </motion.div>
             ))}
           </div>
         </section>
 
-        <section className="space-y-8">
-          <div className="space-y-3">
-            <p className="text-sm uppercase tracking-[0.3em] text-violet-300">Explore domains</p>
-            <h2 className="text-3xl font-semibold text-white">Projects across every skill path.</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {domainGrid.map((domain) => (
-              <DomainTile key={domain.domain} {...domain} />
-            ))}
-          </div>
-        </section>
-      </div>
-
-      <footer className="border-t border-white/10 bg-slate-950/90 py-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-10">
-          <div>
-            <p className="text-sm font-semibold text-white">ProofWork</p>
-            <p className="mt-2 text-sm text-slate-500">A modern student marketplace for verified project experience.</p>
-          </div>
-          <form className="flex flex-col gap-3 sm:flex-row">
-            <label className="sr-only" htmlFor="newsletter-email">
-              Newsletter email
-            </label>
-            <input
-              id="newsletter-email"
-              type="email"
-              placeholder="Enter your email"
-              className="min-w-0 rounded-full border border-white/10 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20"
-            />
-            <button type="submit" className="rounded-full bg-violet-500 px-6 py-3 text-sm font-semibold text-white hover:bg-violet-400">
-              Join updates
+        {/* ─── Domain Explorer ─── */}
+        <section id="domains" className="max-w-7xl mx-auto px-6 md:px-8 py-24">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-4">
+            <div>
+              <h2 className="text-4xl font-bold text-zinc-100 mb-4">Domain Explorer</h2>
+              <p className="text-zinc-400 max-w-md">Find the technical track that matches your ambition. Verified projects by industry leaders.</p>
+            </div>
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="text-violet-400 text-sm uppercase tracking-widest font-bold flex items-center gap-2 group"
+            >
+              View all tracks <span className="group-hover:translate-x-1 transition-transform inline-block">→</span>
             </button>
-          </form>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 md:h-[600px]">
+            {/* Data Engineering - Large, clicking triggers student login */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              onClick={() => setIsAuthModalOpen(true)}
+              className="md:col-span-2 md:row-span-2 bg-[#201f21] rounded-3xl p-8 border border-zinc-800 relative overflow-hidden group hover:border-violet-500/40 hover:shadow-[0_0_30px_rgba(138,76,252,0.12)] transition-all duration-500 flex flex-col justify-between cursor-pointer"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-violet-500/20 flex items-center justify-center">
+                    <span className="text-violet-400 text-xl">📊</span>
+                  </div>
+                  <span className="text-xs uppercase tracking-[0.2em] text-violet-400 font-bold">In High Demand</span>
+                </div>
+                <h3 className="text-3xl font-bold text-zinc-100 mb-4">Data Engineering</h3>
+                <p className="text-zinc-400 max-w-xs mb-8">Build robust pipelines and scalable architectures using modern data stacks.</p>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-zinc-500">840 Projects Active</span>
+                <span className="font-bold text-zinc-100 group-hover:text-violet-400 transition-colors flex items-center gap-1">
+                  Explore → <span className="text-xs opacity-60 font-normal">(Login required)</span>
+                </span>
+              </div>
+            </motion.div>
+
+            {/* UI Design */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1, duration: 0.5 }}
+              onClick={() => setIsAuthModalOpen(true)}
+              className="md:col-span-2 bg-[#131314] rounded-3xl p-8 border border-zinc-800 hover:bg-[#201f21] hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(138,76,252,0.1)] transition-all group overflow-hidden cursor-pointer"
+            >
+              <div className="flex justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
+                    <span className="text-purple-400">✨</span>
+                  </div>
+                  <h3 className="text-2xl font-bold text-zinc-100 mb-2">UI Design & Systems</h3>
+                  <p className="text-sm text-zinc-400 max-w-xs">Master the art of architectural visual languages.</p>
+                </div>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="text-2xl font-bold text-zinc-100">1.2k</span>
+                  <span className="text-[10px] uppercase text-zinc-500">Submissions</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Back-end */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              onClick={() => setIsAuthModalOpen(true)}
+              className="bg-[#131314] rounded-3xl p-8 border border-zinc-800 hover:bg-[#201f21] hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(138,76,252,0.1)] transition-all group cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-xl bg-pink-500/20 flex items-center justify-center mb-6">
+                <span className="text-pink-400">⌨️</span>
+              </div>
+              <h3 className="text-xl font-bold text-zinc-100 mb-2">Back-end</h3>
+              <span className="text-xs text-zinc-500">320 Open Roles</span>
+            </motion.div>
+
+            {/* Analyst */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              onClick={() => setIsAuthModalOpen(true)}
+              className="bg-[#131314] rounded-3xl p-8 border border-zinc-800 hover:bg-[#201f21] hover:border-violet-500/40 hover:shadow-[0_0_20px_rgba(138,76,252,0.1)] transition-all group cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mb-6">
+                <span className="text-blue-400">📈</span>
+              </div>
+              <h3 className="text-xl font-bold text-zinc-100 mb-2">Analyst</h3>
+              <span className="text-xs text-zinc-500">210 Verified Projects</span>
+            </motion.div>
+          </div>
+        </section>
+
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent" />
+
+        {/* ─── Final CTAs ─── */}
+        <section className="max-w-7xl mx-auto px-6 md:px-8 py-32 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl md:text-5xl font-bold text-zinc-100 mb-6">Ready to curate your future?</h2>
+            <p className="text-zinc-400 mb-12 text-lg">Join the network where proof of work is the only currency.</p>
+          </motion.div>
+          <div className="flex flex-col md:flex-row gap-6 justify-center">
+            {/* Jobseeker → student login modal */}
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="flex items-center justify-between gap-8 bg-zinc-100 hover:bg-white text-zinc-950 px-8 py-6 rounded-2xl group transition-all hover:scale-[1.02]"
+            >
+              <div className="text-left">
+                <span className="text-[10px] uppercase tracking-widest block mb-1 opacity-60">I am a</span>
+                <span className="text-2xl font-bold">Jobseeker</span>
+              </div>
+              <span className="group-hover:translate-x-2 transition-transform inline-block text-xl">→</span>
+            </button>
+
+            {/* Company → company onboarding */}
+            <Link
+              href="/auth/company-login"
+              className="flex items-center justify-between gap-8 bg-[#201f21] border border-zinc-800 hover:border-violet-500/40 text-zinc-100 px-8 py-6 rounded-2xl group transition-all hover:scale-[1.02]"
+            >
+              <div className="text-left">
+                <span className="text-[10px] uppercase tracking-widest block mb-1 opacity-60">I am a</span>
+                <span className="text-2xl font-bold">Company</span>
+              </div>
+              <span className="group-hover:translate-x-2 transition-transform inline-block text-xl">→</span>
+            </Link>
+          </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full border-t border-zinc-900 bg-zinc-950">
+        <div className="max-w-7xl mx-auto px-6 md:px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
+          <div className="text-xl font-bold text-zinc-100 flex items-center">
+            Industudent<span className="text-violet-500">.</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-8">
+            <Link href="#" className="text-sm text-zinc-500 hover:text-violet-400 transition-colors">Privacy Policy</Link>
+            <Link href="#" className="text-sm text-zinc-500 hover:text-violet-400 transition-colors">Terms of Service</Link>
+            <Link href="#" className="text-sm text-zinc-500 hover:text-violet-400 transition-colors">Cookie Policy</Link>
+          </div>
+          <div className="text-sm text-zinc-500">
+            © 2026 Industudent. Empowering the next generation.
+          </div>
         </div>
       </footer>
-    </main>
+    </div>
   );
 }

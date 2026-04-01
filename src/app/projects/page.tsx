@@ -262,26 +262,24 @@ function ProjectsPageContent() {
 
                 <div className="grid gap-4 grid-cols-1 md:grid-cols-2 mb-8">
                   {projects.map((project) => (
-                    <Link key={project.id} href={`/projects/${project.id}`}>
-                      <div className="h-full hover:cursor-pointer">
-                        <ProjectCard
-                          project={{
-                            id: project.id,
-                            title: project.title,
-                            company: project.company.companyName,
-                            domain: project.domain,
-                            difficulty: project.difficulty,
-                            description: project.description,
-                            estimatedHours: project.estimatedHours,
-                            attemptFee: project.attemptFee,
-                            spotsTaken: project.attemptCount,
-                            maxAttempts: project.maxAttempts,
-                            tags: project.tags,
-                            deadline: project.deadline.toString(),
-                          }}
-                        />
-                      </div>
-                    </Link>
+                    <div key={project.id} className="h-full hover:cursor-pointer">
+                      <ProjectCard
+                        project={{
+                          id: project.id,
+                          title: project.title,
+                          company: project.company.companyName,
+                          domain: project.domain,
+                          difficulty: project.difficulty,
+                          description: project.description,
+                          estimatedHours: project.estimatedHours,
+                          attemptFee: project.attemptFee,
+                          spotsTaken: project.attemptCount,
+                          maxAttempts: project.maxAttempts,
+                          tags: project.tags,
+                          deadline: project.deadline.toString(),
+                        }}
+                      />
+                    </div>
                   ))}
                 </div>
 

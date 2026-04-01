@@ -1,5 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
+import GitHub from "next-auth/providers/github";
+import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
@@ -13,10 +15,40 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+    Credentials({
+      id: "mock-email",
+      name: "Email",
+      credentials: {
+        email: { label: "Email", type: "email" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email) return null;
+        
+        // Mock a user sign in just by providing an email
+        const email = credentials.email as string;
+        
+        // Upsert the user so they exist in DB
+        const user = await prisma.user.upsert({
+          where: { email },
+          update: {},
+          create: {
+            email,
+            name: email.split("@")[0], // Provide a default name
+            role: Role.STUDENT, // default to student for mock jobseeker
+          },
+        });
+        
+        return user;
+      },
+    }),
   ],
 
   session: {
-    strategy: "database",
+    strategy: "jwt",
   },
 
   pages: {

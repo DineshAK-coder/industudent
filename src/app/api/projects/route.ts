@@ -317,12 +317,15 @@ export async function POST(request: NextRequest) {
     // TODO: Save to database via Prisma
     // TODO: Handle file uploads to Supabase
 
+    const body = await request.json();
+    console.log("Mocking project creation:", body);
+
     return NextResponse.json(
       {
-        success: false,
-        error: "Project creation coming in Phase 18",
+        success: true,
+        data: { id: "mock-proj-" + Date.now(), ...body },
       },
-      { status: 501 }
+      { status: 200 }
     );
   } catch (error) {
     console.error("POST /api/projects error:", error);
